@@ -8,20 +8,21 @@ module.exports = {
   register: function (req, res, next) {
     debug ('register');
 
-    var email = req.body.email;
+    console.log (req.body);
+
+    var nickname = req.body.nickname;
     var password = req.body.password;
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
-    var type = req.body.type;
 
-    if (!email || !password || !firstname || !lastname || !type) {
+    if (!password || !firstname || !lastname || !nickname) {
       return res.status (400).json ({error: 'missing paramaters'});
     }
 
     // TODO verification
 
     return models.User
-      .find ({
+      .findOne ({
         attributes: ['email'],
         where: {email: email},
       })
@@ -30,11 +31,10 @@ module.exports = {
           bcrypt.hash (password, 5, function (err, bcryptedPassword) {
             var newUser = models.User
               .create ({
-                email: email,
                 password: bcryptedPassword,
                 firstname: firstname,
                 lastname: lastname,
-                type: type,
+                nickname: nickname,
               })
               .then (function (newUser) {
                 return res.status (200).json ({
