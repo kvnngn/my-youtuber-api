@@ -1,0 +1,40 @@
+{
+  "version": "0.0.0",
+  "ssl": {
+    "use": false,
+    "key": null,
+    "cert": null
+  },
+  "port": 1234,
+  "name": "myyoutuber-api",
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "myyoutuber",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "prod_myyoutuber",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "smtp": {
+    "port": 465,
+    "host": "smtp.gmail.com",
+    "secure": true,
+    "auth": {
+      "user": "contact.myyoutuber@gmail.com",
+      "pass": "20ManDa1reEn8"
+    },
+    "tls": {
+      "rejectUnauthorized": false
+    }
+  },
+  "mails": {
+    "send": true,
+    "staff": ["Gmail My Youtuber <contact.myyoutuber@gmail.com>"]
+  }
+}
