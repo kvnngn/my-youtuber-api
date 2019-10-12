@@ -2,6 +2,7 @@ var bcrypt = require ('bcrypt');
 var jwtUtils = require ('../../utils/jwt.utils');
 var models = require ('../../models/index');
 const debug = require ('debug') ('app:auth.controller');
+var mailer = require("nodemailer");
 
 //routes
 module.exports = {
@@ -101,5 +102,85 @@ module.exports = {
           return res.status (500).json ({error: 'unable to verify user'});
         });
     }
+  },
+  forgotPassword: function (req, res, next) {
+    debug ('forgotPassword');
+
+    console.log (req.body);
+
+    var email = req.body.email;
+
+    if (!email) {
+      return res.status (400).json ({error: 'missing email'});
+    }
+
+    return models.User
+        .find ({
+          exclude: ['password'],
+          where: {email: email},
+        }).then(function (userFound) {
+          if (userFound) {
+            var state = "err";
+            var randompass = Math.random().toString(36).slice(-8);
+            console.log(randompass);
+
+            var transporter = mailer.createTransport({
+              service: "Gmail",
+              auth: {
+                user: "contact.mandareen@gmail.com",
+                pass: "20ManDa1reEn8"
+              },
+              tls: {
+                rejectUnauthorized: false
+              }
+            });
+            var mail = {
+              from: "contact.mandareen@gmail.com",
+              to: email,
+              subject:
+                  "[No-Reply] Changement de mot de passe - My Youtuber",
+              html:
+                  "<p>Bonjour</p>" +
+                  "<br><p>Vous avez fait une requête de modification de mot passe pour votre compte my-youtuber</p>" +
+                  "<br><p>Votre nouveau mot de passe est: '" +
+                  randompass +
+                  "'</p>"
+            };
+            transporter.sendMail(mail, function (error, response) {
+              if (error) {
+                state = "err";
+                Logs.LogError("500", "sendEmailPassword : " + err);
+                return res.status(500).json({ error: "Send mail failed" });
+              } else {
+                state = "ok";
+                Logs.LogError("200", "sendEmailPassword : " + err);
+                return res.status(200).json({ message: "email send" });
+              }
+            });
+
+
+            bcrypt.hash (randompass, 5, function (err, bcryptedPassword) {
+              return models.User.update(
+                  {
+                    password: bcryptedPassword
+                  },
+                  {
+                    where: { email: email }
+                  }
+              ).then(function (result) {
+                return res.json(result);
+              }).catch(function (err) {
+                console.log("Error changing password");
+                console.log("Log : " + err);
+                Logs.LogError(500, "sendEmailPassword : " + err);
+                return res
+                    .status(500)
+                    .json({Error: "Cannot change password"});
+              });
+            });
+          } else {
+            return res.status(404).json({error: "User not found"});
+          }
+        })
   },
 };
