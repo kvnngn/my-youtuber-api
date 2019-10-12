@@ -20,7 +20,7 @@ module.exports = models;
 
 function initSequelize () {
   const cls = require ('continuation-local-storage');
-  const namespace = cls.createNamespace ('cau-sports-news');
+  const namespace = cls.createNamespace ('myyoutuber');
   Sequelize.useCLS (namespace);
   sequelize = new Sequelize (
     config.development.database,

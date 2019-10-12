@@ -4,13 +4,13 @@ var fs = require ('fs');
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return checkIfCauSportsNewsDatabaseExists ().then (function (res) {
+    return checkIfMyYoutuberDatabaseExists ().then (function (res) {
       if (!res) {
         return initializeDatabaseAsFirstTime ();
       }
     });
 
-    function checkIfCauSportsNewsDatabaseExists () {
+    function checkIfMyYoutuberDatabaseExists () {
       return queryInterface.sequelize
         .query ('SELECT * FROM `SequelizeMeta`', {
           type: Sequelize.QueryTypes.SELECT,
@@ -22,7 +22,7 @@ module.exports = {
 
     function initializeDatabaseAsFirstTime () {
       console.log ('**********************************************');
-      console.log ('   CREATION OF THE  NEWS DATABASE   ');
+      console.log ('   CREATION OF MY YOUTUBER DATABASE   ');
       console.log ('**********************************************');
 
       var sql = fs.readFileSync (__dirname + '/db.sql', 'utf-8');
