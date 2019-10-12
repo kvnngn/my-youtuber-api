@@ -7,6 +7,9 @@ const config = require ('./config');
 const models = require ('./models');
 const express = require ('express');
 const glob = require ('glob');
+const ClientManager = require ('./modules/socket/ClientManager');
+const ChatroomManager = require ('./modules/socket/ChatroomManager');
+const makeHandlers = require ('./modules/socket/handlers');
 
 var app;
 
@@ -75,7 +78,7 @@ function setupLibs () {
     );
 
     // Request headers you wish to allow
-    res.setHeader ('Access-Control-Allow-Headers', '*');
+    res.setHeader ('Access-Control-Allow-Headers', 'Content-Type');
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
@@ -196,6 +199,47 @@ function launchServer () {
   } else {
     server = http.createServer (app);
   }
+
+  const io = require ('socket.io') (server);
+
+  const clientManager = ClientManager ();
+  const chatroomManager = ChatroomManager ();
+  io.on ('connection', function (client) {
+    const {
+      handleRegister,
+      handleJoin,
+      handleLeave,
+      handleMessage,
+      handleGetChatrooms,
+      handleGetAvailableUsers,
+      handleDisconnect,
+    } = makeHandlers (client, clientManager, chatroomManager);
+
+    console.log ('client connected...', client.id);
+    clientManager.addClient (client);
+
+    client.on ('register', handleRegister);
+
+    client.on ('join', handleJoin);
+
+    client.on ('leave', handleLeave);
+
+    client.on ('message', handleMessage);
+
+    client.on ('chatrooms', handleGetChatrooms);
+
+    client.on ('availableUsers', handleGetAvailableUsers);
+
+    client.on ('disconnect', function () {
+      console.log ('client disconnect...', client.id);
+      handleDisconnect ();
+    });
+
+    client.on ('error', function (err) {
+      console.log ('received error from client:', client.id);
+      console.log (err);
+    });
+  });
   server.listen (config.port, function () {
     debug ('%s API server listening on port %s', config.name, config.port);
   });
