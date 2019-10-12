@@ -18,7 +18,7 @@ module.exports = {
     var lastname = req.body.lastname;
 
     if (!password || !firstname || !lastname || !nickname || !email) {
-      return res.status (400).json ({err: 'missing paramaters'});
+      return res.status (400).json ({err: 'Il manque des paramètres'});
     }
 
     // TODO verification
@@ -48,17 +48,17 @@ module.exports = {
               .catch (function (err) {
                 console.log ('Error add user');
                 console.log ('Log : ' + err);
-                return res.status (500).json ({err: 'cannot add user'});
+                return res.status (500).json ({err: 'Impossible d\'ajouter l\'utilisateur", Veuillez réessayer plus tard'});
               });
           });
         } else {
-          return res.status (409).json ({err: 'Email already used'});
+          return res.status (409).json ({err: 'Email déjà utilisé'});
         }
       })
       .catch (function (err) {
         console.log ('Error verify user:');
         console.log ('Log : ' + err);
-        return res.status (500).json ({err: 'unable to verify user'});
+        return res.status (500).json ({err: 'Impossible de vérifier l\'utilisateur, Veuillez réessayer plus tard'});
       });
   },
   login: function (req, res, next) {
@@ -68,7 +68,7 @@ module.exports = {
     var password = req.body.password;
 
     if (email == null || password == null) {
-      return res.status (400).json ({error: 'missing parameters'});
+      return res.status (400).json ({error: 'Il manque des paramètres'});
     }
 
     return Promise.resolve ().then (login ()).catch (next);
@@ -91,15 +91,15 @@ module.exports = {
                   token: jwtUtils.generateTokenForUser (userFound),
                 });
               } else {
-                return res.status (403).json ({error: 'invalid password'});
+                return res.status (403).json ({error: 'Mot de passe invalide'});
               }
             });
           } else {
-            return res.status (404).json ({error: 'user not exist in DB'});
+            return res.status (404).json ({error: 'L\'utilisateur n\'existe pas'});
           }
         })
         .catch (function (err) {
-          return res.status (500).json ({error: 'unable to verify user'});
+          return res.status (500).json ({error: 'Impossible de vérifier l\'utilisateur, Veuillez réessayer plus tard'});
         });
     }
   },
@@ -111,7 +111,7 @@ module.exports = {
     var email = req.body.email;
 
     if (!email) {
-      return res.status (400).json ({error: 'missing email'});
+      return res.status (400).json ({error: 'Il manque l\'email'});
     }
 
     return models.User
@@ -150,11 +150,11 @@ module.exports = {
               if (error) {
                 state = "err";
                 Logs.LogError("500", "sendEmailPassword : " + err);
-                return res.status(500).json({ error: "Send mail failed" });
+                return res.status(500).json({ error: "Impossible d'envoyer le mail, Veuillez réessayer plus tard"});
               } else {
                 state = "ok";
                 Logs.LogError("200", "sendEmailPassword : " + err);
-                return res.status(200).json({ message: "email send" });
+                return res.status(200).json({ message: "Email envoyé" });
               }
             });
 
@@ -172,14 +172,13 @@ module.exports = {
               }).catch(function (err) {
                 console.log("Error changing password");
                 console.log("Log : " + err);
-                Logs.LogError(500, "sendEmailPassword : " + err);
                 return res
                     .status(500)
-                    .json({Error: "Cannot change password"});
+                    .json({Error: "Impossible de changer le mot de passe, Veuillez réessayer plus tard"});
               });
             });
           } else {
-            return res.status(404).json({error: "User not found"});
+            return res.status(404).json({error: "L'utilisateur n'existe pas"});
           }
         })
   },
