@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS `users` (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(256) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `firstname` VARCHAR(100) NOT NULL,
   `nickname` VARCHAR(100) NOT NULL,

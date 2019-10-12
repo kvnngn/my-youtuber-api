@@ -10,12 +10,13 @@ module.exports = {
 
     console.log (req.body);
 
+    var email = req.body.email;
     var nickname = req.body.nickname;
     var password = req.body.password;
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
 
-    if (!password || !firstname || !lastname || !nickname) {
+    if (!password || !firstname || !lastname || !nickname || !email) {
       return res.status (400).json ({error: 'missing paramaters'});
     }
 
@@ -35,6 +36,7 @@ module.exports = {
                 firstname: firstname,
                 lastname: lastname,
                 nickname: nickname,
+                email: email,
               })
               .then (function (newUser) {
                 return res.status (200).json ({
