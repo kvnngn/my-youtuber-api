@@ -18,7 +18,7 @@ module.exports = {
     var lastname = req.body.lastname;
 
     if (!password || !firstname || !lastname || !nickname || !email) {
-      return res.status (400).json ({error: 'missing paramaters'});
+      return res.status (400).json ({err: 'missing paramaters'});
     }
 
     // TODO verification
@@ -48,17 +48,17 @@ module.exports = {
               .catch (function (err) {
                 console.log ('Error add user');
                 console.log ('Log : ' + err);
-                return res.status (500).json ({error: 'cannot add user'});
+                return res.status (500).json ({err: 'cannot add user'});
               });
           });
         } else {
-          return res.status (409).json ({error: 'Email already used'});
+          return res.status (409).json ({err: 'Email already used'});
         }
       })
       .catch (function (err) {
         console.log ('Error verify user:');
         console.log ('Log : ' + err);
-        return res.status (500).json ({error: 'unable to verify user'});
+        return res.status (500).json ({err: 'unable to verify user'});
       });
   },
   login: function (req, res, next) {
