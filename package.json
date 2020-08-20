@@ -9,7 +9,7 @@
     "debug": "DEBUG=app* nodemon $NODE_DEBUG_OPTION app.js"
   },
   "dependencies": {
-    "bcrypt": "^3.0.2",
+    "bcrypt": "^5.0.0",
     "body-parser": "~1.18.2",
     "caniuse-lite": "^1.0.30000851",
     "continuation-local-storage": "^3.2.1",
